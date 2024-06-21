@@ -37,13 +37,6 @@ with open('clean_stations.csv', newline='') as csvfile:
         country.append(row[5])
         state.append(row[6])
 
-print(station)
-print(latitude)
-print(longitude)
-print(elevation)
-print(name)
-print(country)
-print(state)
 
 #tworzenie tabeli na dane poszczególnych stacji
 conn = create_connection("clean_stations.db")
