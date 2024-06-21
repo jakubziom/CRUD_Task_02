@@ -13,7 +13,7 @@ def create_connection(db_file):
 
 #tworzenie pliku z bazą danych
 if __name__ == '__main__':
-    create_connection(r"clean_stations.db")
+    create_connection(r"stations.db")
 
 #lista stacji
 station=[]
@@ -39,14 +39,14 @@ with open('clean_stations.csv', newline='') as csvfile:
 
 
 #tworzenie tabeli na dane poszczególnych stacji
-conn = create_connection("clean_stations.db")
+conn = create_connection("stations.db")
 cur= conn.cursor()
-cur.execute(f'''CREATE TABLE IF NOT EXISTS 'clean_stations' (
+cur.execute(f'''CREATE TABLE IF NOT EXISTS 'stations' (
     id integer PRIMARY KEY,
     '{station[0]}' text NOT NULL,
-    '{latitude[0]}' text NOT NULL,
-    '{longitude[0]}' text NOT NULL,
-    '{elevation[0]}' text NOT NULL,
+    '{latitude[0]}' float NOT NULL,
+    '{longitude[0]}' float NOT NULL,
+    '{elevation[0]}' float NOT NULL,
     '{name[0]}' text NOT NULL,
     '{country[0]}' text NOT NULL,
     '{state[0]}' text NOT NULL
@@ -55,19 +55,19 @@ cur.execute(f'''CREATE TABLE IF NOT EXISTS 'clean_stations' (
 conn.close
 
 #dodaje to tabeli dane dot. poszczególnych stacji
-def add_accountData(conn,clean_stations):
-    sql= '''INSERT INTO clean_stations(station, latitude, longitude, elevation, name, country, state)
+def add_accountData(conn,stations):
+    sql= '''INSERT INTO stations(station, latitude, longitude, elevation, name, country, state)
         VALUES (?,?,?,?,?,?,?);'''
     cur = conn.cursor()
-    cur.execute(sql,clean_stations)
+    cur.execute(sql,stations)
     conn.commit()
     return cur.lastrowid
 
-conn = create_connection("clean_stations.db")
+conn = create_connection("stations.db")
 for i in range(1,len(station)):
     #krotka z danymi do wprowadzenia do tabeli
-    clean_stations=(station[i],latitude[i],longitude[i],elevation[i],name[i],country[i],state[i])
-    pr_id = add_accountData(conn,clean_stations)
+    stations=(station[i],latitude[i],longitude[i],elevation[i],name[i],country[i],state[i])
+    pr_id = add_accountData(conn,stations)
 
 conn.close
 #to sprawdza z której stacji są dane
@@ -89,7 +89,7 @@ with open('clean_measure.csv', newline='') as csvfile:
         tobs.append(row[3])
 
 #tworzy tabelę na dane pomiarów dla poszczególnych stacji
-conn = create_connection("clean_stations.db")
+conn = create_connection("stations.db")
 cur= conn.cursor()
 for i in range(0,len(station)):
     cur.execute(f'''
@@ -97,9 +97,9 @@ for i in range(0,len(station)):
         id integer PRIMARY KEY,
         {station[i]}_id integer NOT NULL,
         {date[0]} text NOT NULL,
-        {precib[0]} text NOT NULL,
-        {tobs[0]} text NOT NULL,
-        FOREIGN KEY ({station[i]}_id) REFERENCES clean_stations (id)
+        {precib[0]} float NOT NULL,
+        {tobs[0]} integer NOT NULL,
+        FOREIGN KEY ({station[i]}_id) REFERENCES stations (id)
         );
         ''')
 conn.close
@@ -114,7 +114,7 @@ def add_Data(conn,clean_stations,stationNumber):
 
 
 #dodaje dane pomiarów do poszczególnych tabel stacji
-conn = create_connection("clean_stations.db")
+conn = create_connection("stations.db")
 for stationNumber in station:
     for i in range(0,len(station2)):
         if station2[i]==stationNumber:
@@ -123,7 +123,7 @@ for stationNumber in station:
             pr_id = add_Data(conn,clean_stations,stationNumber)
 
 #usuwa pustą tabelę
-conn = create_connection("clean_stations.db")
+conn = create_connection("stations.db")
 cur= conn.cursor()
 cur.execute(f"DROP TABLE station")
 conn.commit()   
