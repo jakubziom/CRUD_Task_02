@@ -63,8 +63,8 @@ def add_accountData(conn,clean_stations):
     conn.commit()
     return cur.lastrowid
 
+conn = create_connection("clean_stations.db")
 for i in range(1,len(station)):
-    conn = create_connection("clean_stations.db")
     #krotka z danymi do wprowadzenia do tabeli
     clean_stations=(station[i],latitude[i],longitude[i],elevation[i],name[i],country[i],state[i])
     pr_id = add_accountData(conn,clean_stations)
@@ -112,14 +112,15 @@ def add_Data(conn,clean_stations,stationNumber):
     conn.commit()
     return cur.lastrowid
 
+
 #dodaje dane pomiarów do poszczególnych tabel stacji
-for stationName in station:
+conn = create_connection("clean_stations.db")
+for stationNumber in station:
     for i in range(0,len(station2)):
-        if station2[i]==stationName:
-            conn = create_connection("clean_stations.db")
+        if station2[i]==stationNumber:
             #krotka z danymi do wprowadzenia do tabeli
             clean_stations=(1, date[i],precib[i],tobs[i])
-            pr_id = add_Data(conn,clean_stations,stationName)
+            pr_id = add_Data(conn,clean_stations,stationNumber)
 
 #usuwa pustą tabelę
 conn = create_connection("clean_stations.db")
