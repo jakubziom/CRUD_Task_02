@@ -55,7 +55,7 @@ cur.execute(f'''CREATE TABLE IF NOT EXISTS 'stations' (
 conn.close
 
 #dodaje to tabeli dane dot. poszczególnych stacji
-def add_accountData(conn,stations):
+def add_stationData(conn,stations):
     sql= '''INSERT INTO stations(station, latitude, longitude, elevation, name, country, state)
         VALUES (?,?,?,?,?,?,?);'''
     cur = conn.cursor()
@@ -67,7 +67,7 @@ conn = create_connection("stations.db")
 for i in range(1,len(station)):
     #krotka z danymi do wprowadzenia do tabeli
     stations=(station[i],latitude[i],longitude[i],elevation[i],name[i],country[i],state[i])
-    pr_id = add_accountData(conn,stations)
+    pr_id = add_stationData(conn,stations)
 
 conn.close
 #to sprawdza z której stacji są dane
